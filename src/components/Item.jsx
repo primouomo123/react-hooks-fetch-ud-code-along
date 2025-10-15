@@ -1,4 +1,4 @@
-function Item({ item, onUpdateItem }) {
+function Item({ item, onUpdateItem, onDeleteItem }) {
   function handleAddToCartClick() {
   fetch(`http://localhost:4000/items/${item.id}`, {
     method: "PATCH",
@@ -20,18 +20,32 @@ function Item({ item, onUpdateItem }) {
     .catch(error => console.log(error))
 }
 
+function handleDeleteClick() {
+  fetch(`http://localhost:4000/items/${item.id}`, {
+    method: "DELETE",
+  })
+    .then(r => {
+      if (r.ok) {
+        return r.json()
+      } else {
+        console.log("failed to delete item")
+      }
+    })
+    .then(() => onDeleteItem(item))
+    .catch(error => console.log(error))
+}
+
   return (
     <li className={item.isInCart ? "in-cart" : ""}>
       <span>{item.name}</span>
       <span className="category">{item.category}</span>
-      {/* add the onClick listener */}
       <button
         className={item.isInCart ? "remove" : "add"}
         onClick={handleAddToCartClick}
       >
         {item.isInCart ? "Remove From" : "Add to"} Cart
       </button>
-      <button className="remove">Delete</button>
+      <button className="remove" onClick={handleDeleteClick}>Delete</button>
     </li>
   );
 }
